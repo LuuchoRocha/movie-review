@@ -9,7 +9,7 @@ from ingestion import data, data_collator, id2label, label2id, tokenizer
 from metrics import compute_metrics
 
 model = DistilBertForSequenceClassification.from_pretrained(
-    "distilbert/distilbert-base-uncased",
+    "./movie-bert",
     num_labels=2,
     id2label=id2label,
     label2id=label2id,
@@ -17,11 +17,11 @@ model = DistilBertForSequenceClassification.from_pretrained(
 
 
 training_args = TrainingArguments(
-    output_dir="movie-bert-new",
+    output_dir="./movie-bert",
     learning_rate=2e-5,
-    per_device_train_batch_size=8,
-    per_device_eval_batch_size=8,
-    num_train_epochs=0.5,
+    per_device_train_batch_size=1,
+    per_device_eval_batch_size=1,
+    num_train_epochs=4,
     weight_decay=0.01,
     save_on_each_node=True,
     save_strategy="epoch",

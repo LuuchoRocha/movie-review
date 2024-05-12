@@ -17,6 +17,6 @@ model = DistilBertForSequenceClassification.from_pretrained(
 
 def classify(text):
     with no_grad():
-        logits = model(**tokenizer(text)).logits
+        logits = model(**tokenizer(text, return_tensors="pt")).logits
 
     return model.config.id2label[logits.argmax().item()]
