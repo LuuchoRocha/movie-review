@@ -1,3 +1,4 @@
-import training
+from training import save, train
 
-training.trainer.train()
+train()
+save()

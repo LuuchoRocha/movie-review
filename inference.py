@@ -1,13 +1,11 @@
-import torch
-from datasets import load_dataset
+from torch import no_grad
 from transformers import (
     DistilBertForSequenceClassification,
     DistilBertTokenizerFast,
 )
 
+from ingestion import id2label, label2id
 
-id2label = {0: "NEGATIVE", 1: "POSITIVE"}
-label2id = {"NEGATIVE": 0, "POSITIVE": 1}
 tokenizer = DistilBertTokenizerFast.from_pretrained("./movie-bert")
 model = DistilBertForSequenceClassification.from_pretrained(
     "./movie-bert",
@@ -16,12 +14,9 @@ model = DistilBertForSequenceClassification.from_pretrained(
     label2id=label2id,
 )
 
-def classify(text):
-    inputs = tokenizer(text, return_tensors="pt")
-    
-    with torch.no_grad():
-        logits = model(**inputs).logits
-    
-    predicted_class_id = logits.argmax().item()
-    return model.config.id2label[predicted_class_id]
 
+def classify(text):
+    with no_grad():
+        logits = model(**tokenizer(text)).logits
+
+    return model.config.id2label[logits.argmax().item()]
