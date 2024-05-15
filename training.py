@@ -1,5 +1,5 @@
 from transformers import (
-    DistilBertForSequenceClassification,
+    AutoModelForSequenceClassification,
     Trainer,
     TrainingArguments,
 )
@@ -18,11 +18,14 @@ from config import (
     log_level,
     eval_steps,
 )
-from ingestion import data, data_collator, id2label, label2id, tokenizer
+from ingestion import train_data, eval_data, id2label, label2id, tokenizer
 from metrics import compute_metrics
 
-model = DistilBertForSequenceClassification.from_pretrained(
-    "./hungry-bert",
+weight_decay
+learning_rate
+
+model = AutoModelForSequenceClassification.from_pretrained(
+    "./movie-bert",
     num_labels=2,
     id2label=id2label,
     label2id=label2id,
@@ -30,7 +33,7 @@ model = DistilBertForSequenceClassification.from_pretrained(
 
 
 training_args = TrainingArguments(
-    output_dir="./hungry-bert",
+    output_dir="./movie-bert-2",
     learning_rate=learning_rate,
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
@@ -50,13 +53,11 @@ training_args = TrainingArguments(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=data["train"],
+    train_dataset=train_data,
+    eval_dataset=eval_data,
     tokenizer=tokenizer,
-    data_collator=data_collator,
     compute_metrics=compute_metrics,
 )
-
-trainer.eval_dataset = data["test"] if evaluation_strategy != "no" else None
 
 train = trainer.train
 save = trainer.save_model

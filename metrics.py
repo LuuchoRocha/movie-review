@@ -1,9 +1,10 @@
-import evaluate
 import numpy as np
+import evaluate
+
+metric = evaluate.load("accuracy")
 
 
 def compute_metrics(eval_pred):
-    predictions, labels = eval_pred
-    predictions = np.argmax(predictions, axis=1)
-
-    return evaluate.load("accuracy").compute(predictions=predictions, references=labels)
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    return metric.compute(predictions=predictions, references=labels)

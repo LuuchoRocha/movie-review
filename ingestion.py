@@ -1,11 +1,13 @@
-from transformers import DataCollatorWithPadding, DistilBertTokenizerFast
+from transformers import AutoTokenizer
+from datasets import load_from_disk
 
-from datasets import load_dataset
-
-tokenizer = DistilBertTokenizerFast.from_pretrained("./hungry-bert")
-dataset = load_dataset("csv", data_files="datasets/comidas/train.csv")
-data = dataset.filter(lambda v: len(str(v['text'])) > 5)
-data = data.map(lambda value: tokenizer(value["text"], truncation=True), batched=True)
-id2label = {0: "NEGATIVE", 1: "POSITIVE"}
-label2id = {"NEGATIVE": 0, "POSITIVE": 1}
-data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-uncased")
+dataset = load_from_disk("datasets/imdb")
+train_data = dataset["train"].map(
+    lambda value: tokenizer(value["text"], padding="max_length", truncation=True), batched=True
+)
+eval_data = dataset["test"].map(
+    lambda value: tokenizer(value["text"], padding="max_length", truncation=True), batched=True
+)
+id2label = {0: "Negativo", 1: "Positivo"}
+label2id = {"Negativo": 0, "Positivo": 1}

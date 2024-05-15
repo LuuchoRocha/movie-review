@@ -1,24 +1,12 @@
 from torch import no_grad
-from transformers import (
-    DistilBertForSequenceClassification,
-    DistilBertTokenizerFast,
-)
-
-from ingestion import id2label, label2id
-
-tokenizer = DistilBertTokenizerFast.from_pretrained(
-    "distilbert/distilbert-base-multilingual-cased",
-)
-model = DistilBertForSequenceClassification.from_pretrained(
-    "distilbert/distilbert-base-multilingual-cased",
-    num_labels=2,
-    id2label=id2label,
-    label2id=label2id,
-)
+from ingestion import tokenizer
+from training import model
 
 
 def classify(text):
+    inputs = tokenizer(text, return_tensors="pt")
     with no_grad():
-        logits = model(**tokenizer(text, return_tensors="pt")).logits
+        logits = model(**inputs).logits
 
-    return model.config.id2label[logits.argmax().item()]
+    result_id = logits.argmax().item()
+    return model.config.id2label[result_id]
