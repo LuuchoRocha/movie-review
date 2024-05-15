@@ -11,12 +11,18 @@ from config import (
     save_steps,
     save_strategy,
     use_cpu,
+    max_steps,
+    weight_decay,
+    learning_rate,
+    batch_size,
+    log_level,
+    eval_steps,
 )
 from ingestion import data, data_collator, id2label, label2id, tokenizer
 from metrics import compute_metrics
 
 model = DistilBertForSequenceClassification.from_pretrained(
-    "./movie-bert",
+    "./hungry-bert",
     num_labels=2,
     id2label=id2label,
     label2id=label2id,
@@ -24,19 +30,21 @@ model = DistilBertForSequenceClassification.from_pretrained(
 
 
 training_args = TrainingArguments(
-    output_dir="./movie-bert",
-    learning_rate=2e-5,
-    # per_device_train_batch_size=24,
-    # per_device_eval_batch_size=24,
+    output_dir="./hungry-bert",
+    learning_rate=learning_rate,
+    per_device_train_batch_size=batch_size,
+    per_device_eval_batch_size=batch_size,
     num_train_epochs=num_train_epochs,
     save_steps=save_steps,
-    weight_decay=0.01,
-    save_on_each_node=True,
+    max_steps=max_steps,
+    eval_steps=eval_steps,
+    weight_decay=weight_decay,
     save_strategy=save_strategy,
     evaluation_strategy=evaluation_strategy,
     load_best_model_at_end=evaluation_strategy == save_strategy,
     use_cpu=use_cpu,
-    push_to_hub=True,
+    log_level=log_level,
+    save_total_limit=1,
 )
 
 trainer = Trainer(

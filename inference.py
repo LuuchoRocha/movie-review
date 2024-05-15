@@ -6,9 +6,11 @@ from transformers import (
 
 from ingestion import id2label, label2id
 
-tokenizer = DistilBertTokenizerFast.from_pretrained("./movie-bert")
+tokenizer = DistilBertTokenizerFast.from_pretrained(
+    "distilbert/distilbert-base-multilingual-cased",
+)
 model = DistilBertForSequenceClassification.from_pretrained(
-    "./movie-bert",
+    "distilbert/distilbert-base-multilingual-cased",
     num_labels=2,
     id2label=id2label,
     label2id=label2id,
